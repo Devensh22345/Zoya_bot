@@ -503,5 +503,5 @@ CLONE_HELP = """
 
 ⌯ ᴍᴀᴋᴇ ʏᴏᴜʀ ᴏᴡɴ ʙᴏᴛ ⌯
 
-⌯ ғʀᴏᴍ ᴛʜɪs ʙᴏᴛ @TheChampuBot ⌯
+⌯ Contact @mai_hu_kira ⌯
 """
