@@ -764,10 +764,7 @@ async def back_button_callback(client: Client, callback_query: CallbackQuery):
     keyboard = [
         [
             InlineKeyboardButton(text="ᴏᴡɴᴇʀ", user_id=config.OWNER_ID[0]),
-            InlineKeyboardButton(
-                text="ɢɪᴛʜᴜʙ",
-                url="https://github.com/TheChampu",
-            ),
+            
         ],
         [
             InlineKeyboardButton(text="ɢʀᴏᴜᴘ", url=f"{config.SUPPORT_GROUP}"),
