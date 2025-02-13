@@ -478,10 +478,6 @@ async def about_callback(client: Client, callback_query: CallbackQuery):
             ),
         ],
         [
-            InlineKeyboardButton(text="[ ɪɴsᴛᴀ ]", url=f"https://www.instagram.com/shivanshu_deo/"),
-            InlineKeyboardButton(text="[ ʏᴏᴜᴛᴜʙᴇ ]", url=f"https://www.youtube.com/@itsMeChampu"),
-        ],
-        [
             InlineKeyboardButton(text="● ʙᴀᴄᴋ ●", callback_data="about")
         ],  # Use a default label for the back button
     ]
@@ -510,7 +506,7 @@ async def feature_callback(client: Client, callback_query: CallbackQuery):
         ],
         [InlineKeyboardButton(text="✯ ʜᴏᴍᴇ ✯", callback_data="go_to_start")],
     ]
-    k = f"""**✨ ᴍᴇᴇᴛ {app.mention} !\n\n━━━━━━━━━━━━━━━\n🎶 ɪ’ᴍ ᴀ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ | ᴍᴜsɪᴄ ʙᴏᴛ\n\n🚀 ɴᴏ ʟᴀɢ, ɴᴏ ᴀᴅs, ɴᴏ ᴘʀᴏᴍᴏᴛɪᴏɴs\n🎧 𝟸𝟺/𝟽 ᴜᴘᴛɪᴍᴇ ᴡɪᴛʜ ᴛʜᴇ ʙᴇsᴛ sᴏᴜɴᴅ ǫᴜᴀʟɪᴛʏ\n💡 ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴇxᴘʟᴏʀᴇ ᴍʏ ᴍᴏᴅᴜʟᴇs ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅs!\n\n━━━━━━━━━━━━━━━\n❖ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ➥ <a href=https://t.me/itsMeShivanshu>ᴄʜᴧᴍᴘᴜ</a></b></blockquote>**"""
+    k = f"""**✨ ᴍᴇᴇᴛ {app.mention} !\n\n━━━━━━━━━━━━━━━\n🎶 ɪ’ᴍ ᴀ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ | ᴍᴜsɪᴄ ʙᴏᴛ\n\n🚀 ɴᴏ ʟᴀɢ, ɴᴏ ᴀᴅs, ɴᴏ ᴘʀᴏᴍᴏᴛɪᴏɴs\n🎧 𝟸𝟺/𝟽 ᴜᴘᴛɪᴍᴇ ᴡɪᴛʜ ᴛʜᴇ ʙᴇsᴛ sᴏᴜɴᴅ ǫᴜᴀʟɪᴛʏ\n💡 ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴇxᴘʟᴏʀᴇ ᴍʏ ᴍᴏᴅᴜʟᴇs ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅs!\n\n━━━━━━━━━━━━━━━\n❖ **"""
     await callback_query.message.edit_text(
         text=k, reply_markup=InlineKeyboardMarkup(keyboard)
     )
@@ -560,7 +556,7 @@ async def music_callback(client: Client, callback_query: CallbackQuery):
     )
 
     await callback_query.message.edit(
-        f"``**Cʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ғᴏʀ ᴍᴏʀᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.  Iғ ʏᴏᴜ'ʀᴇ ғᴀᴄɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʏᴏᴜ ᴄᴀɴ ᴀsᴋ ɪɴ [sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ.](t.me/TheChampuClub)**\n\n**Aʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ: /**``",
+        f"``**Cʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ғᴏʀ ᴍᴏʀᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.  Iғ ʏᴏᴜ'ʀᴇ ғᴀᴄɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʏᴏᴜ ᴄᴀɴ ᴀsᴋ ɪɴ [sᴜᴘᴘᴏʀᴛ](t.me/mai_hu_kira)**\n\n**Aʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ: /**``",
         reply_markup=keyboard,
     )
 
@@ -623,7 +619,7 @@ async def management_callback(client: Client, callback_query: CallbackQuery):
     )
 
     await callback_query.message.edit(
-        f"``**Cʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ғᴏʀ ᴍᴏʀᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.  Iғ ʏᴏᴜ'ʀᴇ ғᴀᴄɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʏᴏᴜ ᴄᴀɴ ᴀsᴋ ɪɴ [sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ.](t.me/TheChampuClub)**\n\n**Aʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ: /**``",
+        f"``**Cʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ғᴏʀ ᴍᴏʀᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.  Iғ ʏᴏᴜ'ʀᴇ ғᴀᴄɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʏᴏᴜ ᴄᴀɴ ᴀsᴋ ɪɴ [Owner](t.me/mai_hu_kira)**\n\n**Aʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ: /**``",
         reply_markup=keyboard,
     )
 
@@ -666,7 +662,7 @@ async def tools_callback(client: Client, callback_query: CallbackQuery):
     )
 
     await callback_query.message.edit(
-        f"``**Cʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ғᴏʀ ᴍᴏʀᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.  Iғ ʏᴏᴜ'ʀᴇ ғᴀᴄɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʏᴏᴜ ᴄᴀɴ ᴀsᴋ ɪɴ [sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ.](t.me/TheChampuClub)**\n\n**Aʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ: /**``",
+        f"``**Cʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ғᴏʀ ᴍᴏʀᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.  Iғ ʏᴏᴜ'ʀᴇ ғᴀᴄɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʏᴏᴜ ᴄᴀɴ ᴀsᴋ ɪɴ [sᴜᴘᴘᴏʀᴛ ](t.me/mai_hu_kira)**\n\n**Aʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ: /**``",
         reply_markup=keyboard,
     )
 
@@ -690,7 +686,7 @@ async def feature_callback(client: Client, callback_query: CallbackQuery):
         ],
         [InlineKeyboardButton(text="✯ ʜᴏᴍᴇ ✯", callback_data="go_to_start")],
     ]
-    k = f"""**✨ ᴍᴇᴇᴛ {app.mention} !\n\n━━━━━━━━━━━━━━━\n🎶 ɪ’ᴍ ᴀ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ | ᴍᴜsɪᴄ ʙᴏᴛ\n\n🚀 ɴᴏ ʟᴀɢ, ɴᴏ ᴀᴅs, ɴᴏ ᴘʀᴏᴍᴏᴛɪᴏɴs\n🎧 𝟸𝟺/𝟽 ᴜᴘᴛɪᴍᴇ ᴡɪᴛʜ ᴛʜᴇ ʙᴇsᴛ sᴏᴜɴᴅ ǫᴜᴀʟɪᴛʏ\n💡 ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴇxᴘʟᴏʀᴇ ᴍʏ ᴍᴏᴅᴜʟᴇs ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅs!\n\n━━━━━━━━━━━━━━━\n❖ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ➥ <a href=https://t.me/itsMeShivanshu>ᴄʜᴧᴍᴘᴜ</a></b></blockquote>**"""
+    k = f"""**✨ ᴍᴇᴇᴛ {app.mention} !\n\n━━━━━━━━━━━━━━━\n🎶 ɪ’ᴍ ᴀ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ | ᴍᴜsɪᴄ ʙᴏᴛ\n\n🚀 ɴᴏ ʟᴀɢ, ɴᴏ ᴀᴅs, ɴᴏ ᴘʀᴏᴍᴏᴛɪᴏɴs\n🎧 𝟸𝟺/𝟽 ᴜᴘᴛɪᴍᴇ ᴡɪᴛʜ ᴛʜᴇ ʙᴇsᴛ sᴏᴜɴᴅ ǫᴜᴀʟɪᴛʏ\n💡 ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴇxᴘʟᴏʀᴇ ᴍʏ ᴍᴏᴅᴜʟᴇs ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅs!\n\n━━━━━━━━━━━━━━━\n❖ **"""
     await callback_query.message.edit_text(
         text=k,
         reply_markup=InlineKeyboardMarkup(keyboard),
@@ -783,7 +779,7 @@ async def back_button_callback(client: Client, callback_query: CallbackQuery):
 async def settings_back_callback(client: Client, callback_query: CallbackQuery):
     close = [[InlineKeyboardButton(text="✯ ᴄʟᴏsᴇ ✯", callback_data="close")]]
     await callback_query.message.reply_photo(
-        photo="https://envs.sh/TS-.jpg",
+        photo="https://envs.sh/E0-.jpg",
         caption=f"**sᴜᴘᴘᴏʀᴛ ᴍʏ ᴄᴏᴅɪɴɢ ᴊᴏᴜʀɴᴇʏ ʙʏ ᴅᴏɴᴀᴛɪɴɢ ᴅɪʀᴇᴄᴛʟʏ ᴛᴏ ʜᴇʟᴘ ᴇɴʜᴀɴᴄᴇ ᴍʏ ʙᴏᴛ's ғᴇᴀᴛᴜʀᴇs ᴀɴᴅ ᴅᴇᴠᴇʟᴏᴘᴍᴇɴᴛ.**\n\n**ʏᴏᴜʀ ᴄᴏɴᴛʀɪʙᴜᴛɪᴏɴ ᴡɪʟʟ ᴅɪʀᴇᴄᴛʟʏ ғᴜɴᴅ ᴛʜᴇ ᴄʀᴇᴀᴛɪᴏɴ ᴏғ ɪɴɴᴏᴠᴀᴛɪᴠᴇ, ᴜsᴇʀ-ғʀɪᴇɴᴅʟʏ ᴛᴏᴏʟs ᴀɴᴅ ᴇxᴄɪᴛɪɴɢ ʙᴏᴛ ᴄᴀᴘᴀʙɪʟɪᴛɪᴇs.**\n\n**sɪᴍᴘʟʏ sᴄᴀɴ ᴛʜᴇ ᴄᴏᴅᴇ ᴀɴᴅ ᴍᴀᴋᴇ ᴀ ᴘᴀʏᴍᴇɴᴛ—ɴᴏ ʜᴀssʟᴇ, ᴊᴜsᴛ ᴀ ǫᴜɪᴄᴋ ᴡᴀʏ ᴛᴏ sᴜᴘᴘᴏʀᴛ ᴀɴᴅ ʜᴇʟᴘ ʙʀɪɴɢ ɴᴇᴡ ғᴇᴀᴛᴜʀᴇs ᴛᴏ ʟɪғᴇ.**\n\n**ᴇᴠᴇʀʏ ᴅᴏɴᴀᴛɪᴏɴ, ʙɪɢ ᴏʀ sᴍᴀʟʟ, ɢᴏᴇs ᴀ ʟᴏɴɢ ᴡᴀʏ ɪɴ ᴘᴜsʜɪɴɢ ᴛʜɪs ᴘʀᴏᴊᴇᴄᴛ ғᴏʀᴡᴀʀᴅ. ᴛʜᴀɴᴋ ʏᴏᴜ ғᴏʀ ʙᴇɪɴɢ ᴀ ᴘᴀʀᴛ ᴏғ ᴛʜɪs ᴇxᴄɪᴛɪɴɢ ᴊᴏᴜʀɴᴇʏ!**",
         reply_markup=InlineKeyboardMarkup(close),
     )
