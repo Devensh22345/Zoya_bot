@@ -75,7 +75,7 @@ def paginate_modules(page_n, module_dict, prefix, chat=None, close: bool = False
                 ),
                 EqInlineKeyboardButton(
                     "ᴄʟᴏsᴇ" if close else "Bᴀᴄᴋ",
-                    callback_data="close" if close else "feature",
+                    callback_data="close" if close else "go_to_start",
                 ),
                 EqInlineKeyboardButton(
                     "❯",
