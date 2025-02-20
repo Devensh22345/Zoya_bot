@@ -225,7 +225,7 @@ async def start_comm(client, message: Message, _):
 
                 userss_photo = START_IMG_URL
             else:
-                userss_photo = START_IMG_URL"
+                userss_photo = START_IMG_URL
             if userss_photo:
                 chat_photo = userss_photo
             chat_photo = userss_photo if userss_photo else START_IMG_URL
