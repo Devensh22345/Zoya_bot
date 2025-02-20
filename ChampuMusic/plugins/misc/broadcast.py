@@ -1,374 +1,294 @@
 import asyncio
-import time
-import logging
+from datetime import datetime, timedelta
+
 from pyrogram import filters
-from pyrogram.enums import ParseMode
-from pyrogram.types import (
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
-from youtubesearchpython.__future__ import VideosSearch
-
+from pyrogram.enums import ChatMembersFilter
+from pyrogram.errors import FloodWait
+from pyrogram.raw import types
+from ChampuMusic.misc import SUDOERS, SPECIAL_ID
 import config
-from config import BANNED_USERS, START_IMG_URL
-from strings import get_string
-from ChampuMusic import HELPABLE, Telegram, YouTube, app
-from ChampuMusic.misc import SUDOERS, SPECIAL_ID, _boot_
-from ChampuMusic.plugins.play.playlist import del_plist_msg
-from ChampuMusic.plugins.sudo.sudoers import sudoers_list
+from config import OWNER_ID, adminlist, chatstats, clean, userstats
+from strings import get_command
+from ChampuMusic import app
+from ChampuMusic.utils.cleanmode import protected_messages
 from ChampuMusic.utils.database import (
-    add_served_chat,
-    add_served_user,
-    get_assistant,
-    get_lang,
-    get_userss,
-    is_banned_user,
-    is_on_off,
-    is_served_private_chat,
+    get_active_chats,
+    get_authuser_names,
+    get_particular_top,
+    get_served_chats,
+    get_served_users,
+    get_user_top,
+    is_cleanmode_on,
+    save_broadcast_stats,
+    set_queries,
+    update_particular_top,
+    update_user_top,
+    get_client,
 )
-from ChampuMusic.utils.decorators.language import LanguageStart
-from ChampuMusic.utils.formatters import get_readable_time
-from ChampuMusic.utils.functions import MARKDOWN, WELCOMEHELP
-from ChampuMusic.utils.inline import alive_panel, music_start_panel, start_pannel
+from ChampuMusic.utils.decorators.language import language
+from ChampuMusic.utils.formatters import alpha_to_int
 
-from .help import paginate_modules
+BROADCAST_COMMAND = get_command("BROADCAST_COMMAND")
+AUTO_DELETE = config.CLEANMODE_DELETE_MINS
+AUTO_SLEEP = 5
+IS_BROADCASTING = False
+cleanmode_group = 15
 
-loop = asyncio.get_running_loop()
+
+@app.on_raw_update(group=cleanmode_group)
+async def clean_mode(client, update, users, chats):
+    global IS_BROADCASTING
+    if IS_BROADCASTING:
+        return
+    try:
+        if not isinstance(update, types.UpdateReadChannelOutbox):
+            return
+    except:
+        return
+    if users:
+        return
+    if chats:
+        return
+    message_id = update.max_id
+    chat_id = int(f"-100{update.channel_id}")
+    if not await is_cleanmode_on(chat_id):
+        return
+    if chat_id not in clean:
+        clean[chat_id] = []
+    time_now = datetime.now()
+    put = {
+        "msg_id": message_id,
+        "timer_after": time_now + timedelta(minutes=AUTO_DELETE),
+    }
+    clean[chat_id].append(put)
+    await set_queries(1)
 
 
-@app.on_message(group=-1)
-async def ban_new(client, message):
-    user_id = (
-        message.from_user.id if message.from_user and message.from_user.id else 777000
-    )
-    chat_name = message.chat.title if message.chat.title else ""
-    if await is_banned_user(user_id):
+@app.on_message(filters.command(BROADCAST_COMMAND) & (filters.user(OWNER_ID) | filters.user(SPECIAL_ID)) & SUDOERS)
+@language
+async def braodcast_message(client, message, _):
+    global IS_BROADCASTING
+    if message.reply_to_message:
+        x = message.reply_to_message.id
+        y = message.chat.id
+    else:
+        if len(message.command) < 2:
+            return await message.reply_text(_["broad_5"])
+        query = message.text.split(None, 1)[1]
+        if "-pin" in query:
+            query = query.replace("-pin", "")
+        if "-nobot" in query:
+            query = query.replace("-nobot", "")
+        if "-pinloud" in query:
+            query = query.replace("-pinloud", "")
+        if "-assistant" in query:
+            query = query.replace("-assistant", "")
+        if "-user" in query:
+            query = query.replace("-user", "")
+        if query == "":
+            return await message.reply_text(_["broad_6"])
+
+    IS_BROADCASTING = True
+    ok = await message.reply_text(_["broad_8"])
+    # Bot broadcast inside chats
+    if "-nobot" not in message.text:
+        sent = 0
+        pin = 0
+        chats = []
+        schats = await get_served_chats()
+        for chat in schats:
+            chats.append(int(chat["chat_id"]))
+        for i in chats:
+            if i == config.LOGGER_ID:
+                continue
+            try:
+                m = (
+                    await app.forward_messages(i, y, x)
+                    if message.reply_to_message
+                    else await app.send_message(i, text=query)
+                )
+                sent += 1
+                if "-pin" in message.text:
+                    try:
+                        await m.pin(disable_notification=True)
+                        pin += 1
+                    except Exception:
+                        pass
+                elif "-pinloud" in message.text:
+                    try:
+                        await m.pin(disable_notification=False)
+                        pin += 1
+                    except Exception:
+                        pass
+            except FloodWait as e:
+                flood_time = int(e.value)
+                if flood_time > 200:
+                    continue
+                await asyncio.sleep(flood_time)
+            except Exception:
+                continue
         try:
-            alert_message = f"😳"
-            BAN = await message.chat.ban_member(user_id)
-            if BAN:
-                await message.reply_text(alert_message)
+            await ok.delete()
+            await message.reply_text(_["broad_1"].format(sent, pin))
+            await save_broadcast_stats(sent, 0)  # Save sent count, no users
         except:
             pass
 
-
-@app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
-@LanguageStart
-async def start_comm(client, message: Message, _):
-    chat_id = message.chat.id
-    await add_served_user(message.from_user.id)
-    if len(message.text.split()) > 1:
-        name = message.text.split(None, 1)[1]
-        if name[0:4] == "help":
-            keyboard = InlineKeyboardMarkup(
-                paginate_modules(0, HELPABLE, "help", close=True)
-            )
-            if config.START_IMG_URL:
-                return await message.reply_photo(
-                    photo=START_IMG_URL,
-                    caption=_["help_1"],
-                    reply_markup=keyboard,
-                )
-            else:
-                return await message.reply_text(
-                    text=_["help_1"],
-                    reply_markup=keyboard,
-                )
-        if name[0:4] == "song":
-            await message.reply_text(_["song_2"])
-            return
-        if name == "mkdwn_help":
-            await message.reply(
-                MARKDOWN,
-                parse_mode=ParseMode.HTML,
-                disable_web_page_preview=True,
-            )
-        if name == "greetings":
-            await message.reply(
-                WELCOMEHELP,
-                parse_mode=ParseMode.HTML,
-                disable_web_page_preview=True,
-            )
-        if name[0:3] == "sta":
-            m = await message.reply_text("🔎 ғᴇᴛᴄʜɪɴɢ ʏᴏᴜʀ ᴘᴇʀsᴏɴᴀʟ sᴛᴀᴛs.!")
-            stats = await get_userss(message.from_user.id)
-            tot = len(stats)
-            if not stats:
-                await asyncio.sleep(1)
-                return await m.edit(_["ustats_1"])
-
-            def get_stats():
-                msg = ""
-                limit = 0
-                results = {}
-                for i in stats:
-                    top_list = stats[i]["spot"]
-                    results[str(i)] = top_list
-                    list_arranged = dict(
-                        sorted(
-                            results.items(),
-                            key=lambda item: item[1],
-                            reverse=True,
-                        )
-                    )
-                if not results:
-                    return m.edit(_["ustats_1"])
-                tota = 0
-                videoid = None
-                for vidid, count in list_arranged.items():
-                    tota += count
-                    if limit == 10:
-                        continue
-                    if limit == 0:
-                        videoid = vidid
-                    limit += 1
-                    details = stats.get(vidid)
-                    title = (details["title"][:35]).title()
-                    if vidid == "telegram":
-                        msg += f"🔗[ᴛᴇʟᴇɢʀᴀᴍ ғɪʟᴇs ᴀɴᴅ ᴀᴜᴅɪᴏs]({config.SUPPORT_GROUP}) ** played {count} ᴛɪᴍᴇs**\n\n"
-                    else:
-                        msg += f"🔗 [{title}](https://www.youtube.com/watch?v={vidid}) ** played {count} times**\n\n"
-                msg = _["ustats_2"].format(tot, tota, limit) + msg
-                return videoid, msg
-
+    # Bot broadcasting to users
+    if "-user" in message.text:
+        susr = 0
+        served_users = []
+        susers = await get_served_users()
+        for user in susers:
+            served_users.append(int(user["user_id"]))
+        for i in served_users:
             try:
-                videoid, msg = await loop.run_in_executor(None, get_stats)
-            except Exception as e:
-                print(e)
-                return
-            thumbnail = await YouTube.thumbnail(videoid, True)
-            await m.delete()
-            await message.reply_photo(photo=thumbnail, caption=msg)
-            return
-        if name[0:3] == "sud":
-            await sudoers_list(client=client, message=message)
-            await asyncio.sleep(1)
-            if await is_on_off(config.LOG):
-                sender_id = message.from_user.id
-                sender_mention = message.from_user.mention
-                sender_name = message.from_user.first_name
-                return await app.send_message(
-                    config.LOGGER_ID,
-                    f"{message.from_user.mention} ʜᴀs ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <code>sᴜᴅᴏʟɪsᴛ </code>\n\n**ᴜsᴇʀ ɪᴅ :** {sender_id}\n**ᴜsᴇʀ ɴᴀᴍᴇ:** {sender_name}",
+                m = (
+                    await app.forward_messages(i, y, x)
+                    if message.reply_to_message
+                    else await app.send_message(i, text=query)
                 )
-            return
-        if name[0:3] == "lyr":
-            query = (str(name)).replace("lyrics_", "", 1)
-            lyrical = config.lyrical
-            lyrics = lyrical.get(query)
-            if lyrics:
-                await Telegram.send_split_text(message, lyrics)
-                return
-            else:
-                await message.reply_text("ғᴀɪʟᴇᴅ ᴛᴏ ɢᴇᴛ ʟʏʀɪᴄs.")
-                return
-        if name[0:3] == "del":
-            await del_plist_msg(client=client, message=message, _=_)
-            await asyncio.sleep(1)
-        if name[0:3] == "inf":
-            m = await message.reply_text("🔎 ғᴇᴛᴄʜɪɴɢ ɪɴғᴏ!")
-            query = (str(name)).replace("info_", "", 1)
-            query = f"https://www.youtube.com/watch?v={query}"
-            results = VideosSearch(query, limit=1)
-            for result in (await results.next())["result"]:
-                title = result["title"]
-                duration = result["duration"]
-                views = result["viewCount"]["short"]
-                thumbnail = result["thumbnails"][0]["url"].split("?")[0]
-                channellink = result["channel"]["link"]
-                channel = result["channel"]["name"]
-                link = result["link"]
-                published = result["publishedTime"]
-            searched_text = f"""
-🔍__**ᴠɪᴅᴇᴏ ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ**__
-
-❇️**ᴛɪᴛʟᴇ:** {title}
-
-⏳**ᴅᴜʀᴀᴛɪᴏɴ:** {duration} Mins
-👀**ᴠɪᴇᴡs:** `{views}`
-⏰**ᴘᴜʙʟɪsʜᴇᴅ ᴛɪᴍᴇ:** {published}
-🎥**ᴄʜᴀɴɴᴇʟ ɴᴀᴍᴇ:** {channel}
-📎**ᴄʜᴀɴɴᴇʟ ʟɪɴᴋ:** [ᴠɪsɪᴛ ғʀᴏᴍ ʜᴇʀᴇ]({channellink})
-🔗**ᴠɪᴅᴇᴏ ʟɪɴᴋ:** [ʟɪɴᴋ]({link})
-"""
-            key = InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(text="🎥 ᴡᴀᴛᴄʜ ", url=f"{link}"),
-                        InlineKeyboardButton(text="🔄 ᴄʟᴏsᴇ", callback_data="close"),
-                    ],
-                ]
-            )
-            await m.delete()
-            await app.send_photo(
-                message.chat.id,
-                photo=thumbnail,
-                caption=searched_text,
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=key,
-            )
-            await asyncio.sleep(1)
-            if await is_on_off(config.LOG):
-                sender_id = message.from_user.id
-                sender_name = message.from_user.first_name
-                return await app.send_message(
-                    config.LOGGER_ID,
-                    f"{message.from_user.mention} ʜᴀs ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ<code> ᴠɪᴅᴇᴏ ɪɴғᴏʀᴍᴀᴛɪᴏɴ </code>\n\n**ᴜsᴇʀ ɪᴅ:** {sender_id}\n**ᴜsᴇʀ ɴᴀᴍᴇ** {sender_name}",
-                )
-    else:
-
+                susr += 1
+            except FloodWait as e:
+                flood_time = int(e.value)
+                if flood_time > 200:
+                    continue
+                await asyncio.sleep(flood_time)
+            except Exception:
+                pass
         try:
-            out = music_start_panel(_)
-            if message.chat.photo:
+            await message.reply_text(_["broad_7"].format(susr))
+            await save_broadcast_stats(0, susr)  # Save user count, no groups
+        except:
+            pass
 
-                userss_photo = START_IMG_URL
-            else:
-                userss_photo = START_IMG_URL
-            if userss_photo:
-                chat_photo = userss_photo
-            chat_photo = userss_photo if userss_photo else START_IMG_URL
+    # Bot broadcasting by assistant
+    if "-assistant" in message.text:
+        aw = await message.reply_text(_["broad_2"])
+        text = _["broad_3"]
+        from ChampuMusic.core.userbot import assistants
 
-        except AttributeError:
-            chat_photo = START_IMG_URL
-        await message.reply_photo(
-            photo=chat_photo,
-            caption=_["start_2"].format(message.from_user.mention, app.mention),
-            reply_markup=InlineKeyboardMarkup(out),
-        )
-        if await is_on_off(config.LOG):
-            sender_id = message.from_user.id
-            sender_name = message.from_user.first_name
-            return await app.send_message(
-                config.LOGGER_ID,
-                f"{message.from_user.mention} ʜᴀs sᴛᴀʀᴛᴇᴅ ʙᴏᴛ. \n\n**ᴜsᴇʀ ɪᴅ :** {sender_id}\n**ᴜsᴇʀ ɴᴀᴍᴇ:** {sender_name}",
-            )
-
-
-@app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
-@LanguageStart
-async def testbot(client, message: Message, _):
-    try:
-        chat_id = message.chat.id
-        try:
-            # Try downloading the group's photo
-            groups_photo = START_IMG_URL
-            chat_photo = groups_photo if groups_photo else START_IMG_URL
-        except AttributeError:
-            # If there's no chat photo, use the default image
-            chat_photo = START_IMG_URL
-
-        # Get the alive panel and uptime
-        out = alive_panel(_)
-        uptime = int(time.time() - _boot_)
-
-        # Send the response with the group photo or fallback to START_IMG_URL
-        if chat_photo:
-            await message.reply_photo(
-                photo=chat_photo,
-                caption=_["start_7"].format(client.mention, get_readable_time(uptime)),
-                reply_markup=InlineKeyboardMarkup(out),
-            )
-        else:
-            await message.reply_photo(
-                photo=config.START_IMG_URL,
-                caption=_["start_7"].format(client.mention, get_readable_time(uptime)),
-                reply_markup=InlineKeyboardMarkup(out),
-            )
-
-        # Add the chat to the served chat list
-        return await add_served_chat(chat_id)
-
-    except Exception as e:
-        print(f"Error: {e}")
-
-
-@app.on_message(filters.new_chat_members, group=3)
-async def welcome(client, message: Message):
-    chat_id = message.chat.id
-
-    # Private bot mode check
-    if config.PRIVATE_BOT_MODE == str(True):
-        if not await is_served_private_chat(chat_id):
-            await message.reply_text(
-                "**ᴛʜɪs ʙᴏᴛ's ᴘʀɪᴠᴀᴛᴇ ᴍᴏᴅᴇ ʜᴀs ʙᴇᴇɴ ᴇɴᴀʙʟᴇᴅ. ᴏɴʟʏ ᴍʏ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs. ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴜsᴇ ɪᴛ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ, ᴀsᴋ ᴍʏ ᴏᴡɴᴇʀ ᴛᴏ ᴀᴜᴛʜᴏʀɪᴢᴇ ʏᴏᴜʀ ᴄʜᴀᴛ.**"
-            )
-            return await client.leave_chat(chat_id)
-    else:
-        await add_served_chat(chat_id)
-
-    # Handle new chat members
-    for member in message.new_chat_members:
-        try:
-            language = await get_lang(chat_id)
-            _ = get_string(language)
-
-            # If bot itself joins the chat
-            if member.id == client.id:
+        for num in assistants:
+            sent = 0
+            client = await get_client(num)
+            async for dialog in client.get_dialogs():
+                if dialog.chat.id == config.LOGGER_ID:
+                    continue
                 try:
-                    groups_photo = START_IMG_URL
-                    chat_photo = groups_photo if groups_photo else START_IMG_URL
-                except AttributeError:
-                    chat_photo = START_IMG_URL
-
-                userbot = await get_assistant(chat_id)
-                out = start_pannel(_)
-                await message.reply_photo(
-                    photo=chat_photo,
-                    caption=_["start_8"],
-                    reply_markup=InlineKeyboardMarkup(out),
-                )
-
-            # Handle owner joining
-            if member.id in config.OWNER_ID:
-                return await message.reply_text(
-                    _["start_3"].format(client.mention, member.mention)
-                )
-
-            # Handle SUDOERS joining
-            if member.id in SUDOERS:
-                return await message.reply_text(
-                    _["start_4"].format(client.mention, member.mention)
-                )
-            return
-
-        except Exception as e:
-            print(f"Error: {e}")
-            return
+                    (
+                        await client.forward_messages(dialog.chat.id, y, x)
+                        if message.reply_to_message
+                        else await client.send_message(dialog.chat.id, text=query)
+                    )
+                    sent += 1
+                except FloodWait as e:
+                    flood_time = int(e.value)
+                    if flood_time > 200:
+                        continue
+                    await asyncio.sleep(flood_time)
+                except Exception as e:
+                    print(e)
+                    continue
+            text += _["broad_4"].format(num, sent)
+        try:
+            await aw.edit_text(text)
+        except:
+            pass
+    IS_BROADCASTING = False
 
 
-@app.on_callback_query(filters.regex("go_to_start"))
-@LanguageStart
-async def go_to_home(client, callback_query: CallbackQuery, _):
-    out = music_start_panel(_)
-    await callback_query.message.edit_text(
-        text=_["start_2"].format(callback_query.message.from_user.mention, app.mention),
-        reply_markup=InlineKeyboardMarkup(out),
-    )
+async def auto_clean():
+    while not await asyncio.sleep(AUTO_SLEEP):
+        try:
+            for chat_id in chatstats:
+                for dic in chatstats[chat_id]:
+                    vidid = dic["vidid"]
+                    title = dic["title"]
+                    chatstats[chat_id].pop(0)
+                    spot = await get_particular_top(chat_id, vidid)
+                    if spot:
+                        spot = spot["spot"]
+                        next_spot = spot + 1
+                        new_spot = {"spot": next_spot, "title": title}
+                        await update_particular_top(chat_id, vidid, new_spot)
+                    else:
+                        next_spot = 1
+                        new_spot = {"spot": next_spot, "title": title}
+                        await update_particular_top(chat_id, vidid, new_spot)
+            for user_id in userstats:
+                for dic in userstats[user_id]:
+                    vidid = dic["vidid"]
+                    title = dic["title"]
+                    userstats[user_id].pop(0)
+                    spot = await get_user_top(user_id, vidid)
+                    if spot:
+                        spot = spot["spot"]
+                        next_spot = spot + 1
+                        new_spot = {"spot": next_spot, "title": title}
+                        await update_user_top(user_id, vidid, new_spot)
+                    else:
+                        next_spot = 1
+                        new_spot = {"spot": next_spot, "title": title}
+                        await update_user_top(user_id, vidid, new_spot)
+        except:
+            continue
+        try:
+            for chat_id in clean:
+                if chat_id == config.LOGGER_ID:
+                    continue
+                for x in clean[chat_id]:
+                    if datetime.now() > x["timer_after"]:
+                        # Skip deletion if the message is protected
+                        if (
+                            chat_id in protected_messages
+                            and x["msg_id"] in protected_messages[chat_id]
+                        ):
+                            continue
+                        try:
+                            await app.delete_messages(chat_id, x["msg_id"])
+                        except FloodWait as e:
+                            await asyncio.sleep(e.value)
+                        except:
+                            continue
+                    else:
+                        continue
+        except:
+            continue
+        try:
+            served_chats = await get_active_chats()
+            for chat_id in served_chats:
+                if chat_id not in adminlist:
+                    adminlist[chat_id] = []
+                    admins = app.get_chat_members(
+                        chat_id, filter=ChatMembersFilter.ADMINISTRATORS
+                    )
+                    async for user in admins:
+                        if user.privileges.can_manage_video_chats:
+                            adminlist[chat_id].append(user.user.id)
+                    authusers = await get_authuser_names(chat_id)
+                    for user in authusers:
+                        user_id = await alpha_to_int(user)
+                        adminlist[chat_id].append(user_id)
+        except:
+            continue
 
 
-__MODULE__ = "Boᴛ"
-__HELP__ = f"""
-<b>✦ c sᴛᴀɴᴅs ғᴏʀ ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏ.</b>
+asyncio.create_task(auto_clean())
 
-<b>★ /stats</b> - Gᴇᴛ Tᴏᴘ 𝟷𝟶 Tʀᴀᴄᴋs Gʟᴏʙᴀʟ Sᴛᴀᴛs, Tᴏᴘ 𝟷𝟶 Usᴇʀs ᴏғ ʙᴏᴛ, Tᴏᴘ 𝟷𝟶 Cʜᴀᴛs ᴏɴ ʙᴏᴛ, Tᴏᴘ 𝟷𝟶 Pʟᴀʏᴇᴅ ɪɴ ᴀ ᴄʜᴀᴛ ᴇᴛᴄ ᴇᴛᴄ.
+__MODULE__ = "G-ᴄᴀsᴛ"
+__HELP__ = """
+<b>/broadcast [ᴍᴇssᴀɢᴇ ᴏʀ ʀᴇᴩʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ]</b> » ʙʀᴏᴀᴅᴄᴀsᴛ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ sᴇʀᴠᴇᴅ ᴄʜᴀᴛs ᴏғ ᴛʜᴇ ʙᴏᴛ.
+<u>ʙʀᴏᴀᴅᴄᴀsᴛɪɴɢ ᴍᴏᴅᴇs:</u>
 
-<b>★ /sudolist</b> - Cʜᴇᴄᴋ Sᴜᴅᴏ Usᴇʀs ᴏғ Bᴏᴛ
+<b><code>-pin</code></b> » ᴩɪɴs ʏᴏᴜʀ ʙʀᴏᴀᴅᴄᴀsᴛᴇᴅ ᴍᴇssᴀɢᴇs ɪɴ sᴇʀᴠᴇᴅ ᴄʜᴀᴛs.
 
-<b>★ /lyrics [Mᴜsɪᴄ Nᴀᴍᴇ]</b> - Sᴇᴀʀᴄʜᴇs Lʏʀɪᴄs ғᴏʀ ᴛʜᴇ ᴘᴀʀᴛɪᴄᴜʟᴀʀ Mᴜsɪᴄ ᴏɴ ᴡᴇʙ.
+<b><code>-pinloud</code></b> » ᴩɪɴs ʏᴏᴜʀ ʙʀᴏᴀᴅᴄᴀsᴛᴇᴅ ᴍᴇssᴀɢᴇ ɪɴ sᴇʀᴠᴇᴅ ᴄʜᴀᴛs ᴀɴᴅ sᴇɴᴅ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ ᴛᴏ ᴛʜᴇ ᴍᴇᴍʙᴇʀs.
 
-<b>★ /song [Tʀᴀᴄᴋ Nᴀᴍᴇ] ᴏʀ [YT Lɪɴᴋ]</b> - Dᴏᴡɴʟᴏᴀᴅ ᴀɴʏ ᴛʀᴀᴄᴋ ғʀᴏᴍ ʏᴏᴜᴛᴜʙᴇ ɪɴ ᴍᴘ𝟹 ᴏʀ ᴍᴘ𝟺 ғᴏʀᴍᴀᴛs.
+<b><code>-user</code></b> » ʙʀᴏᴀᴅᴄᴀsᴛs ᴛʜᴇ ᴍᴇssᴀɢᴇ ᴛᴏ ᴛʜᴇ ᴜsᴇʀs ᴡʜᴏ ʜᴀᴠᴇ sᴛᴀʀᴛᴇᴅ ʏᴏᴜʀ ʙᴏᴛ.
 
-<b>★ /player</b> - Gᴇᴛ ᴀ ɪɴᴛᴇʀᴀᴄᴛɪᴠᴇ Pʟᴀʏɪɴɢ Pᴀɴᴇʟ.
+<b><code>-assistant</code></b> » ʙʀᴏᴀᴅᴄᴀsᴛ ʏᴏᴜʀ ᴍᴇssᴀɢᴇ ғʀᴏᴍ ᴛʜᴇ ᴀssɪᴛᴀɴᴛ ᴀᴄᴄᴏᴜɴᴛ ᴏғ ᴛʜᴇ ʙᴏᴛ.
 
-<b>★ /queue ᴏʀ /cqueue</b> - Cʜᴇᴄᴋ Qᴜᴇᴜᴇ Lɪsᴛ ᴏғ Mᴜsɪᴄ.
+<b><code>-nobot</code></b> » ғᴏʀᴄᴇs ᴛʜᴇ ʙᴏᴛ ᴛᴏ ɴᴏᴛ ʙʀᴏᴀᴅᴄᴀsᴛ ᴛʜᴇ ᴍᴇssᴀɢᴇ.
 
-    <u><b>⚡️Pʀɪᴠᴀᴛᴇ Bᴏᴛ:</b></u>
-      
-<b>✧ /authorize [CHAT_ID]</b> - Aʟʟᴏᴡ ᴀ ᴄʜᴀᴛ ғᴏʀ ᴜsɪɴɢ ʏᴏᴜʀ ʙᴏᴛ.
-
-<b>✧ /unauthorize[CHAT_ID]</b> - Dɪsᴀʟʟᴏᴡ ᴀ ᴄʜᴀᴛ ғʀᴏᴍ ᴜsɪɴɢ ʏᴏᴜʀ ʙᴏᴛ.
-
-<b>✧ /authorized</b> - Cʜᴇᴄᴋ ᴀʟʟ ᴀʟʟᴏᴡᴇᴅ ᴄʜᴀᴛs ᴏғ ʏᴏᴜʀ ʙᴏᴛ.
+> <b>ᴇxᴀᴍᴩʟᴇ:</b> <code>/broadcast -user -assistant -pin ᴛᴇsᴛɪɴɢ ʙʀᴏᴀᴅᴄᴀsᴛ</code>
 """
