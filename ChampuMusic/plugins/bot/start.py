@@ -240,8 +240,7 @@ async def start_comm(client, message: Message, _):
                 f"{message.from_user.mention} ʜᴀs sᴛᴀʀᴛᴇᴅ ʙᴏᴛ. \n\n**ᴜsᴇʀ ɪᴅ :** {sender_id}\n**ᴜsᴇʀ ɴᴀᴍᴇ:** {sender_name}",
             )
 
-except: 
-pass
+
 
 
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
@@ -251,7 +250,9 @@ async def testbot(client, message: Message, _):
         chat_id = message.chat.id
         try:
             chat_photo = START_IMG_URL
-            
+
+        except:
+            pass
 
         # Get the alive panel and uptime
         out = alive_panel(_)
