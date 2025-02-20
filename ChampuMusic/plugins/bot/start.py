@@ -248,38 +248,6 @@ async def start_comm(client, message: Message, _):
             )
 
 
-@app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
-@LanguageStart
-async def testbot(client, message: Message, _):
-    try:
-        chat_id = message.chat.id
-        try:
-            chat_photo = START_IMG_URL
-
-        # Get the alive panel and uptime
-        out = alive_panel(_)
-        uptime = int(time.time() - _boot_)
-
-        # Send the response with the group photo or fallback to START_IMG_URL
-        if chat_photo:
-            await message.reply_photo(
-                photo=chat_photo,
-                caption=_["start_7"].format(client.mention, get_readable_time(uptime)),
-                reply_markup=InlineKeyboardMarkup(out),
-            )
-        else:
-            await message.reply_photo(
-                photo=config.START_IMG_URL,
-                caption=_["start_7"].format(client.mention, get_readable_time(uptime)),
-                reply_markup=InlineKeyboardMarkup(out),
-            )
-
-        # Add the chat to the served chat list
-        return await add_served_chat(chat_id)
-
-    except Exception as e:
-        print(f"Error: {e}")
-
 
 @app.on_message(filters.new_chat_members, group=3)
 async def welcome(client, message: Message):
