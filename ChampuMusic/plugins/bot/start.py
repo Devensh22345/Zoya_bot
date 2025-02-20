@@ -223,9 +223,7 @@ async def start_comm(client, message: Message, _):
             out = music_start_panel(_)
             if message.chat.photo:
 
-                userss_photo = await app.download_media(
-                    message.chat.photo.big_file_id,
-                )
+                userss_photo = START_IMG_URL
             else:
                 userss_photo = "assets/nodp.jpg"
             if userss_photo:
