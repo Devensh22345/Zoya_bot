@@ -223,11 +223,9 @@ async def start_comm(client, message: Message, _):
             out = music_start_panel(_)
             if message.chat.photo:
 
-                userss_photo = await app.download_media(
-                    message.chat.photo.big_file_id,
-                )
+                userss_photo = START_IMG_URL
             else:
-                userss_photo = "assets/nodp.jpg"
+                userss_photo = START_IMG_URL
             if userss_photo:
                 chat_photo = userss_photo
             chat_photo = userss_photo if userss_photo else START_IMG_URL
@@ -258,8 +256,7 @@ async def testbot(client, message: Message, _):
             groups_photo = await client.download_media(
                 message.chat.photo.big_file_id, file_name=f"chatpp{chat_id}.png"
             )
-            chat_photo = groups_photo if groups_photo else START_IMG_URL
-        except AttributeError:
+            chat_photo = START_IMG_URL
             # If there's no chat photo, use the default image
             chat_photo = START_IMG_URL
 
@@ -314,7 +311,7 @@ async def welcome(client, message: Message):
                     groups_photo = await client.download_media(
                         message.chat.photo.big_file_id, file_name=f"chatpp{chat_id}.png"
                     )
-                    chat_photo = groups_photo if groups_photo else START_IMG_URL
+                    chat_photo = START_IMG_URL
                 except AttributeError:
                     chat_photo = START_IMG_URL
 
