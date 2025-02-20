@@ -223,15 +223,10 @@ async def start_comm(client, message: Message, _):
             out = music_start_panel(_)
             if message.chat.photo:
 
-                userss_photo = START_IMG_URL
-            else:
-                userss_photo = "assets/nodp.jpg"
-            if userss_photo:
-                chat_photo = userss_photo
-            chat_photo = userss_photo if userss_photo else START_IMG_URL
-
-        except AttributeError:
-            chat_photo = "assets/nodp.jpg"
+                chat_photo = START_IMG_URL
+            
+        except:
+            pass
         await message.reply_photo(
             photo=chat_photo,
             caption=_["start_2"].format(message.from_user.mention, app.mention),
@@ -252,19 +247,13 @@ async def testbot(client, message: Message, _):
     try:
         chat_id = message.chat.id
         try:
-            # Try downloading the group's photo
-            groups_photo = await client.download_media(
-                message.chat.photo.big_file_id, file_name=f"chatpp{chat_id}.png"
-            )
             chat_photo = START_IMG_URL
-            # If there's no chat photo, use the default image
-            chat_photo = START_IMG_URL
+            
 
         # Get the alive panel and uptime
         out = alive_panel(_)
         uptime = int(time.time() - _boot_)
-
-        # Send the response with the group photo or fallback to START_IMG_URL
+        
         if chat_photo:
             await message.reply_photo(
                 photo=chat_photo,
@@ -289,7 +278,8 @@ async def testbot(client, message: Message, _):
 async def welcome(client, message: Message):
     chat_id = message.chat.id
 
-    # Private bot mode check
+    # Private
+    bot mode check
     if config.PRIVATE_BOT_MODE == str(True):
         if not await is_served_private_chat(chat_id):
             await message.reply_text(
