@@ -1,4 +1,4 @@
-"# Netscape HTTP Cookie File
+# Netscape HTTP Cookie File
 # https://curl.haxx.se/rfc/cookie_spec.html
 # This is a generated file! Do not edit.
 
@@ -35,4 +35,4 @@
 .youtube.com	TRUE	/	FALSE	1740071548	ST-1xfnljg	csn=eTLHMePv93l_5LH3&itct=CIUBEPxaIhMI3_uez9_SiwMVsgSDAx0EjhXcMgpnLWhpZ2gtcmVjWg9GRXdoYXRfdG9fd2F0Y2iaAQYQjh4YngE%3D
 .youtube.com	TRUE	/	TRUE	0	YSC	Xvt8eJSG5mc
 .youtube.com	TRUE	/	FALSE	1740458377	ST-1r43b78	csn=RwbSZ-YfdEw5jtEF&itct=CGQQh_YEGAEiEwjNrfXUgN6LAxUys0sFHcE7HX9aD0ZFd2hhdF90b193YXRjaJoBBQgkEI4e
-.youtube.com	TRUE	/	FALSE	1740458378	ST-18p7fxu	csn=RwbSZ-YfdEw5jtEF&itct=CDkQ_FoiEwjNrfXUgN6LAxUys0sFHcE7HX8yCmctaGlnaC1yZWNaD0ZFd2hhdF90b193YXRjaJoBBhCOHhieAQ%3D%3D"
+.youtube.com	TRUE	/	FALSE	1740458378	ST-18p7fxu	csn=RwbSZ-YfdEw5jtEF&itct=CDkQ_FoiEwjNrfXUgN6LAxUys0sFHcE7HX8yCmctaGlnaC1yZWNaD0ZFd2hhdF90b193YXRjaJoBBhCOHhieAQ%3D%3D
