@@ -20,6 +20,7 @@ psutil
 pytube
 pykeyboard
 unidecode
+matplotlib
 py-tgcalls==1.2.9
 ntgcalls==1.1.2
 python-dotenv
