@@ -63,7 +63,7 @@ OWNER_ID = list(
 # Your heroku app name
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME", "zoya8")
 # Get it from http://dashboard.heroku.com/account
-HEROKU_API_KEY = getenv("HEROKU_API_KEY", "HRKU-6eb0c3f6-5cd9-4aee-bd08-50f4a429d55b")
+HEROKU_API_KEY = getenv("HEROKU_API_KEY", "HRKU-cb772a9e-2d36-4cd5-9b35-604f6abe7c99")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
