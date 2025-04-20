@@ -8,17 +8,17 @@ load_dotenv()
 
 
 # Get this value from my.telegram.org/apps
-API_ID = int(getenv("API_ID"))
-API_HASH = getenv("API_HASH")
+API_ID = int(getenv("API_ID", "22207976"))
+API_HASH = getenv("API_HASH", "5c0ad7c48a86afac87630ba28b42560d")
 
 ## Get it from @Botfather in Telegram.
-BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_TOKEN = getenv("BOT_TOKEN", "7732000256:AAFaxCLQ7yJ_wvrO6pDp8KLxXf5HHv4cpQ4")
 
 # Get Your bot username
 BOT_USERNAME = getenv("BOT_USERNAME" , "Miss_alya_robot")
 
 # Get your mongo url from cloud.mongodb.com
-MONGO_DB_URI = getenv("MONGO_DB_URI", None)
+MONGO_DB_URI = getenv("MONGO_DB_URI", "mongodb+srv://Music4:Music4@cluster0.uazfr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
 CLEANMODE_DELETE_MINS = int(
     getenv("CLEANMODE_MINS", "6000")
@@ -32,7 +32,7 @@ DURATION_LIMIT_MIN = int(
 
 EXTRA_PLUGINS = getenv(
     "EXTRA_PLUGINS",
-    True,
+    "False",
 )
 
 # Fill True if you want to load extra plugins
@@ -52,7 +52,7 @@ SONG_DOWNLOAD_DURATION = int(
 )  # Remember to give value in Minutes
 
 # You'll need a Private Group ID for this.
-LOGGER_ID = int(getenv("LOGGER_ID", None))
+LOGGER_ID = int(getenv("LOGGER_ID", "-1002388027112"))
 
 # Your User ID.
 OWNER_ID = list(
@@ -61,9 +61,9 @@ OWNER_ID = list(
 
 ## Fill these variables if you're deploying on heroku.
 # Your heroku app name
-HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
+HEROKU_APP_NAME = getenv("HEROKU_APP_NAME", "zoya8")
 # Get it from http://dashboard.heroku.com/account
-HEROKU_API_KEY = getenv("HEROKU_API_KEY")
+HEROKU_API_KEY = getenv("HEROKU_API_KEY", "HRKU-6eb0c3f6-5cd9-4aee-bd08-50f4a429d55b")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
@@ -71,7 +71,7 @@ UPSTREAM_REPO = getenv(
 )
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv(
-    "GIT_TOKEN", None
+    "GIT_TOKEN", "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"
 )  # Fill this variable if your upstream repository is private
 
 # Only  Links formats are  accepted for this Var value.
@@ -133,7 +133,7 @@ SET_CMDS = getenv("SET_CMDS", True)
 
 
 # You'll need a Pyrogram String Session for these vars. Generate String from our session generator bot @ChampuStringBot
-STRING1 = getenv("STRING_SESSION", None)
+STRING1 = getenv("STRING_SESSION", "BQGfwhYAGeZte8d8TmDZLqjtVIQov76WoDQvwvETEiEy5Qt1Dg8ucerFdhHcsg-55PKTxBdtaWpdSUJTwylxHHjVtSoGu3EW-6RxojqzFOkRYBLjPktyY_tFfRyMbJ6T3sRf8FD0m4PIEHXIJJm0cU_us35BD846PlLAMHKJgBAC4SPbw3udSVjH9prY95Yej2DRrepldeIcWyETdwn8u5dioHuDSNqK4N5DOUieBPvNSB2uZgb2YuL014MKB1H7nXHdVl8OsZP7_BRqKZj4HFBd7wWo0SDIukzt-T5kwW-DJepP4dIPJoTfhJTboIjIbem3H8b9_QvbkbA30t_FLvsHwY_coQAAAAF9AkPaAA")
 STRING2 = getenv("STRING_SESSION2", None)
 STRING3 = getenv("STRING_SESSION3", None)
 STRING4 = getenv("STRING_SESSION4", None)
