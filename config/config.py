@@ -52,7 +52,7 @@ SONG_DOWNLOAD_DURATION = int(
 )  # Remember to give value in Minutes
 
 # You'll need a Private Group ID for this.
-LOGGER_ID = int(getenv("LOGGER_ID", "-1002388027112"))
+LOGGER_ID = int(getenv("LOGGER_ID", "-1002833168925"))
 
 # Your User ID.
 OWNER_ID = list(
@@ -61,9 +61,9 @@ OWNER_ID = list(
 
 ## Fill these variables if you're deploying on heroku.
 # Your heroku app name
-HEROKU_APP_NAME = getenv("HEROKU_APP_NAME", "zoya8")
+HEROKU_APP_NAME = getenv("HEROKU_APP_NAME", "alya-music12")
 # Get it from http://dashboard.heroku.com/account
-HEROKU_API_KEY = getenv("HEROKU_API_KEY", "HRKU-cb772a9e-2d36-4cd5-9b35-604f6abe7c99")
+HEROKU_API_KEY = getenv("HEROKU_API_KEY", "HRKU-AAoHrEobe8fisRIoVFIANZsLyyR-HQTqSwAH1zXnFKZA_____w46mVggoBCk")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
@@ -133,7 +133,7 @@ SET_CMDS = getenv("SET_CMDS", True)
 
 
 # You'll need a Pyrogram String Session for these vars. Generate String from our session generator bot @ChampuStringBot
-STRING1 = getenv("STRING_SESSION", "BQGfwhYAGeZte8d8TmDZLqjtVIQov76WoDQvwvETEiEy5Qt1Dg8ucerFdhHcsg-55PKTxBdtaWpdSUJTwylxHHjVtSoGu3EW-6RxojqzFOkRYBLjPktyY_tFfRyMbJ6T3sRf8FD0m4PIEHXIJJm0cU_us35BD846PlLAMHKJgBAC4SPbw3udSVjH9prY95Yej2DRrepldeIcWyETdwn8u5dioHuDSNqK4N5DOUieBPvNSB2uZgb2YuL014MKB1H7nXHdVl8OsZP7_BRqKZj4HFBd7wWo0SDIukzt-T5kwW-DJepP4dIPJoTfhJTboIjIbem3H8b9_QvbkbA30t_FLvsHwY_coQAAAAF9AkPaAA")
+STRING1 = getenv("STRING_SESSION", "BQGfwhYANylK-SsQeAiKbZX8epE6qITPl9SEj2s5CCt4KEFTOhJ0E7hJJ4wZkAXRiZ2ObTkuKVXQfxY6FcF54B8KQTH641yE7u6dBHj8ZV9qTWfnQnho2GuXU--nAjrAWZl5ON-am3tusYL5siqPN95Pdn6pd021lvO0ZmnF6Sl_H6KcNgjaT2vyvPNsWhODk5N518Luw61wgqXIa72KLPgSKhbVuPbcGmAf08ztsgYz96k-z3YySb-_Siqfh9XiWdG1hSc6VFLx3FvsiXRfg8fAVBwoI0L-tdRJe6RHtPBrA1b9U1JCC_N-FtDqmk6b-wkv4OccJckE4AmdXoMmwUXRpWdyBQAAAAF9AkPaAA")
 STRING2 = getenv("STRING_SESSION2", None)
 STRING3 = getenv("STRING_SESSION3", None)
 STRING4 = getenv("STRING_SESSION4", None)
