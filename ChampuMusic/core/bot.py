@@ -1,7 +1,6 @@
-import uvloop
-
-uvloop.install()
-
+# ❌ REMOVE THESE TWO LINES COMPLETELY
+# import uvloop
+# uvloop.install()
 
 from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus
@@ -13,10 +12,11 @@ from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
-from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
-import config
+from pyrogram.errors import ChatWriteForbidden
 
+import config
 from ..logging import LOGGER
+
 
 
 class ChampuBot(Client):
