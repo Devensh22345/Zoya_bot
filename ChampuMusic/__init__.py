@@ -3,8 +3,9 @@ from ChampuMusic.core.dir import dirr
 from ChampuMusic.core.git import git
 from ChampuMusic.core.userbot import Userbot
 from ChampuMusic.misc import dbb, heroku, sudo
-
 from .logging import LOGGER
+
+from .plugins import ALL_MODULES  # ✅ Add this line
 
 EMOJIS = ["PPLAY_1", "PPLAY_2", "PPLAY_3", "PPLAY_4", "PPLAY_5",
           "PPLAY_6", "PPLAY_7", "PPLAY_8", "PPLAY_9", "PPLAY_10",
